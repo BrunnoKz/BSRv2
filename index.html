@@ -1,0 +1,1453 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>BSR Build — Questionnaire Électricité (Belgique / RGIE) + PDFs</title>
+
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --border:#e7e7ef;
+      --text:#111;
+      --muted:#555;
+      --radius:16px;
+      --pad:18px;
+      --gap:14px;
+      --tap:52px;          /* taille touch */
+      --max:1180px;
+      --primary:#111;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      -webkit-text-size-adjust:100%;
+    }
+
+    header{
+      position:sticky; top:0; z-index:20;
+      background:rgba(255,255,255,.92);
+      backdrop-filter: blur(10px);
+      border-bottom:1px solid var(--border);
+    }
+    .topbar{
+      max-width:var(--max);
+      margin:0 auto;
+      padding:12px 14px;
+      display:flex;
+      gap:12px;
+      align-items:center;
+      justify-content:space-between;
+    }
+    .brand{
+      display:flex; gap:12px; align-items:center;
+      min-width: 260px;
+    }
+    .brand .txt{ display:flex; flex-direction:column; line-height:1.1; }
+    .brand .txt b{ font-size:16px; }
+    .brand .txt span{ font-size:12px; color:#444; margin-top:2px; }
+
+    .nav{
+      display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end;
+    }
+    .pill{
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:999px;
+      padding:10px 12px;
+      font-weight:900;
+      font-size:13px;
+      cursor:pointer;
+      min-height:44px;
+    }
+
+    main{
+      max-width:var(--max);
+      margin:0 auto;
+      padding: 14px;
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns: 330px 1fr;
+      gap: var(--gap);
+      align-items:start;
+    }
+
+    aside{
+      position:sticky;
+      top:84px;
+      align-self:start;
+    }
+    .sidecard{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:14px;
+      box-shadow:0 1px 0 rgba(0,0,0,.03);
+    }
+    .sidecard h3{ margin:0 0 10px; font-size:14px; }
+    .sidecard p{ margin:0 0 10px; font-size:12px; color:var(--muted); }
+    .sidebtn{
+      width:100%;
+      min-height:var(--tap);
+      border-radius:14px;
+      border:1px solid var(--border);
+      background:#fff;
+      font-weight:950;
+      cursor:pointer;
+      padding:12px;
+      text-align:left;
+      margin:6px 0;
+    }
+    .sidebtn small{ display:block; font-weight:650; color:var(--muted); margin-top:2px; }
+    .sidebtn.primary{ background:var(--primary); color:#fff; border-color:var(--primary); }
+    .sidebtn.warn{ border-color:#ffdde2; }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding: var(--pad);
+      box-shadow:0 1px 0 rgba(0,0,0,.03);
+      margin-bottom: var(--gap);
+      scroll-margin-top: 96px;
+    }
+    .card h2{ margin:0 0 12px; font-size:16px; }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--gap);
+    }
+    @media (max-width: 980px){
+      .layout{ grid-template-columns: 1fr; }
+      aside{ position:relative; top:0; }
+    }
+    @media (max-width: 820px){
+      .grid{ grid-template-columns: 1fr; }
+      .nav{ display:none; }
+    }
+
+    label{ display:block; font-size:13px; margin:0 0 6px; color:#222; }
+    .req{ color:#b00020; font-weight:900; margin-left:6px; }
+
+    input[type="text"], input[type="email"], input[type="tel"], input[type="date"], input[type="number"], select, textarea{
+      width:100%;
+      border:1px solid #d8d8e6;
+      border-radius: 12px;
+      padding: 14px 12px;
+      outline:none;
+      background:#fff;
+      font-size:16px;
+      min-height: var(--tap);
+    }
+    textarea{ min-height: 110px; resize:vertical; }
+
+    .row{ margin-bottom: 12px; }
+    .help{ font-size:12px; color:var(--muted); margin-top:6px; }
+
+    .opts{ display:flex; flex-wrap:wrap; gap:10px; margin-top: 8px; }
+    .chip{
+      display:flex; gap:10px; align-items:center;
+      border:1px solid #d8d8e6;
+      border-radius:999px;
+      padding:12px 14px;
+      background:#fff;
+      font-size:14px;
+      min-height:44px;
+    }
+    .chip input{ transform: scale(1.15); }
+
+    .divider{ height:1px; background:#eee; margin: 14px 0; }
+    details summary{ cursor:pointer; font-weight:950; }
+    details{ margin-top: 6px; }
+
+    .filebox{
+      border:1px dashed #cfd0df;
+      border-radius:14px;
+      padding:14px;
+      background:#fcfcff;
+    }
+    .filelist{ font-size:12px; color:#444; margin-top:10px; }
+
+    .toast{
+      position:fixed;
+      left:50%; transform:translateX(-50%);
+      bottom:18px;
+      background:#111; color:#fff;
+      padding:12px 14px;
+      border-radius:999px;
+      opacity:0; transition:.2s;
+      z-index: 100;
+      font-weight:950;
+    }
+    .toast.show{ opacity:1; }
+
+    .mono{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+      font-size:12px;
+      white-space:pre-wrap;
+    }
+
+    /* Impression */
+    #printArea{ display:none; }
+    @media print{
+      header, .no-print{ display:none !important; }
+      body{ background:#fff; }
+      #printArea{ display:block; padding: 18px; }
+      #printArea .head{ display:flex; align-items:center; gap:12px; }
+      #printArea h1{ margin:0; font-size:18px; }
+      #printArea .meta{ color:#444; font-size:12px; margin-top:4px; }
+      #printArea .block{ margin: 12px 0 14px; }
+      #printArea h3{ margin: 0 0 8px; font-size:14px; }
+      #printArea .v{ font-size:12.5px; margin: 3px 0; }
+      #printArea hr{ border:0; border-top:1px solid #ddd; margin: 12px 0; }
+    }
+  </style>
+
+  <!-- jsPDF (CDN). Offline: utilisez “Imprimer / Enregistrer en PDF” -->
+  <script defer src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+</head>
+
+<body>
+<header>
+  <div class="topbar">
+    <div class="brand">
+      <!-- LOGO BSR Build (SVG) — remplaçable plus tard -->
+      <svg width="44" height="44" viewBox="0 0 64 64" aria-label="BSR Build logo" role="img">
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#111"/>
+            <stop offset="1" stop-color="#444"/>
+          </linearGradient>
+        </defs>
+        <rect x="6" y="6" width="52" height="52" rx="14" fill="url(#g)"/>
+        <path d="M18 42V22h12c5 0 8 2 8 6 0 2-1 4-3 5 3 1 4 3 4 6 0 5-4 7-9 7H18zm8-12h4c2 0 3-1 3-2s-1-2-3-2h-4v4zm0 8h5c2 0 3-1 3-3 0-1-1-3-3-3h-5v6z" fill="#fff" opacity=".95"/>
+        <path d="M41 22h5v20h-5z" fill="#fff" opacity=".35"/>
+      </svg>
+      <div class="txt">
+        <b>BSR Build</b>
+        <span>Questionnaire Électricité (Belgique / RGIE) + PDFs</span>
+      </div>
+    </div>
+
+    <div class="nav">
+      <button class="pill" type="button" onclick="scrollToId('sec1')">1) Client</button>
+      <button class="pill" type="button" onclick="scrollToId('sec2')">2) Alimentation</button>
+      <button class="pill" type="button" onclick="scrollToId('sec3')">3) RGIE/Docs</button>
+      <button class="pill" type="button" onclick="scrollToId('sec4')">4) Tableau</button>
+      <button class="pill" type="button" onclick="scrollToId('sec6')">6) Pièces</button>
+      <button class="pill" type="button" onclick="scrollToId('sec7')">7) Sécurité</button>
+      <button class="pill" type="button" onclick="scrollToId('sec9')">9) Devis</button>
+    </div>
+  </div>
+</header>
+
+<main class="no-print">
+  <div class="layout">
+    <aside>
+      <div class="sidecard">
+        <h3>Actions rapides (iPad)</h3>
+        <p>Sauvegardez sur l’iPad et générez les deux PDFs.</p>
+
+        <button class="sidebtn primary" type="button" id="btnPDFInterne">
+          Générer PDF interne (pour vous)
+          <small>Dossier RGIE + checklist + recommandations</small>
+        </button>
+
+        <button class="sidebtn primary" type="button" id="btnPDFDevis">
+          Générer PDF Devis (pour le client)
+          <small>Points + lumières + spots + déchets + TVA</small>
+        </button>
+
+        <button class="sidebtn" type="button" id="btnPrint">
+          Imprimer / Enregistrer en PDF (offline)
+          <small>Fonctionne sans internet</small>
+        </button>
+
+        <div class="divider"></div>
+
+        <button class="sidebtn" type="button" id="btnSave">
+          Sauvegarder sur l’iPad
+          <small>LocalStorage</small>
+        </button>
+
+        <button class="sidebtn" type="button" id="btnLoad">
+          Charger le dernier
+          <small>Récupérer les données</small>
+        </button>
+
+        <button class="sidebtn" type="button" id="btnTop">
+          Retour en haut
+          <small>Navigation rapide</small>
+        </button>
+
+        <div class="divider"></div>
+
+        <button class="sidebtn warn" type="reset" form="form" id="btnClear">
+          Tout effacer
+          <small>Efface aussi le sauvegardé</small>
+        </button>
+      </div>
+    </aside>
+
+    <section>
+      <form id="form">
+
+        <!-- 1) CLIENT -->
+        <section class="card" id="sec1">
+          <h2>1) Client, Adresse et Objectif</h2>
+
+          <div class="grid">
+            <div class="row">
+              <label for="client_nom">Nom complet <span class="req">*</span></label>
+              <input id="client_nom" name="client_nom" type="text" required placeholder="Ex.: Jean Dupont" />
+            </div>
+            <div class="row">
+              <label for="client_contact">Téléphone / Email <span class="req">*</span></label>
+              <input id="client_contact" name="client_contact" type="text" required placeholder="Ex.: +32... / email@..." />
+            </div>
+          </div>
+
+          <div class="row">
+            <label for="adresse">Adresse (CP + commune) <span class="req">*</span></label>
+            <input id="adresse" name="adresse" type="text" required placeholder="Ex.: Rue..., 1000 Bruxelles" />
+          </div>
+
+          <div class="grid">
+            <div class="row">
+              <label for="type_bien">Type de bien</label>
+              <select id="type_bien" name="type_bien">
+                <option value="">Sélectionner...</option>
+                <option>Maison (isolée)</option>
+                <option>Maison (mitoyenne)</option>
+                <option>Appartement</option>
+                <option>Duplex/Triplex</option>
+                <option>Mixte (commerce + logement)</option>
+                <option>Autre</option>
+              </select>
+            </div>
+            <div class="row">
+              <label for="annee_construction">Année de construction (approx.)</label>
+              <input id="annee_construction" name="annee_construction" type="number" min="1800" max="2100" placeholder="Ex.: 1978" />
+            </div>
+          </div>
+
+          <div class="grid">
+            <div class="row">
+              <label for="objectif">Objectif du chantier</label>
+              <select id="objectif" name="objectif">
+                <option value="">Sélectionner...</option>
+                <option>Nouvelle installation</option>
+                <option>Rénovation complète</option>
+                <option>Rénovation partielle (quelques pièces)</option>
+                <option>Ajout de circuits (cuisine/EV/jardin)</option>
+                <option>Dépannage (disjoncteur qui saute / échauffement)</option>
+                <option>Mise en conformité RGIE</option>
+                <option>Autre</option>
+              </select>
+            </div>
+            <div class="row">
+              <label for="date_debut">Date souhaitée de début</label>
+              <input id="date_debut" name="date_debut" type="date" />
+            </div>
+          </div>
+
+          <div class="row">
+            <label for="contraintes">Contraintes / conditions sur place</label>
+            <textarea id="contraintes" name="contraintes" placeholder="Ex.: chantier occupé, horaires, murs béton, poussière minimale, accès tableau, etc."></textarea>
+          </div>
+        </section>
+
+        <!-- 2) ALIMENTATION -->
+        <section class="card" id="sec2">
+          <h2>2) Alimentation, Compteur et Puissance</h2>
+
+          <div class="grid">
+            <div class="row">
+              <label for="alimentation">Type d’alimentation</label>
+              <select id="alimentation" name="alimentation">
+                <option value="">Sélectionner...</option>
+                <option>Monophasé 230V</option>
+                <option>Triphasé 3x230V</option>
+                <option>Triphasé 3x400V + N</option>
+                <option>Je ne sais pas (à confirmer)</option>
+              </select>
+            </div>
+
+            <div class="row">
+              <label for="puissance">Puissance (kVA / A)</label>
+              <input id="puissance" name="puissance" type="text" placeholder="Ex.: 6,9 kVA / 9,2 kVA / 40A" />
+            </div>
+          </div>
+
+          <div class="row">
+            <label>Systèmes existants / prévus</label>
+            <div class="opts">
+              <label class="chip"><input type="checkbox" name="systemes" value="PV (panneaux solaires)"> PV</label>
+              <label class="chip"><input type="checkbox" name="systemes" value="Batterie"> Batterie</label>
+              <label class="chip"><input type="checkbox" name="systemes" value="Wallbox / EV"> Wallbox / EV</label>
+              <label class="chip"><input type="checkbox" name="systemes" value="Pompe à chaleur"> PAC</label>
+              <label class="chip"><input type="checkbox" name="systemes" value="Plaque induction"> Induction</label>
+              <label class="chip"><input type="checkbox" name="systemes" value="Boiler / chauffage électrique"> Boiler</label>
+              <label class="chip"><input type="checkbox" name="systemes" value="Groupe/UPS"> UPS</label>
+            </div>
+          </div>
+
+          <div class="row">
+            <label for="pannes">Pannes / symptômes actuels</label>
+            <textarea id="pannes" name="pannes" placeholder="Ex.: disjoncteur saute avec four, prises chaudes, lumière qui clignote..."></textarea>
+          </div>
+        </section>
+
+        <!-- 3) RGIE / DOCS -->
+        <section class="card" id="sec3">
+          <h2>3) RGIE: Contrôle, Documents et État</h2>
+
+          <div class="grid">
+            <div class="row">
+              <label for="conformite">Conformité actuelle</label>
+              <select id="conformite" name="conformite">
+                <option value="">Sélectionner...</option>
+                <option>Oui (rapport valide)</option>
+                <option>Non (non conforme)</option>
+                <option>Inconnu</option>
+              </select>
+            </div>
+            <div class="row">
+              <label for="date_controle">Date du dernier contrôle (si connue)</label>
+              <input id="date_controle" name="date_controle" type="date" />
+            </div>
+          </div>
+
+          <div class="row">
+            <label>Documents disponibles</label>
+            <div class="opts">
+              <label class="chip"><input type="checkbox" name="docs" value="Rapport/Certificat RGIE"> Rapport RGIE</label>
+              <label class="chip"><input type="checkbox" name="docs" value="Schéma unifilaire"> Unifilaire</label>
+              <label class="chip"><input type="checkbox" name="docs" value="Plan de situation"> Plan situation</label>
+              <label class="chip"><input type="checkbox" name="docs" value="Liste des circuits"> Liste circuits</label>
+            </div>
+          </div>
+
+          <div class="row">
+            <label for="etat_installation">État de l’installation / remarques importantes</label>
+            <textarea id="etat_installation" name="etat_installation"
+              placeholder="Ex.: pas de terre, vieux câbles, tableau ancien, dérivations cachées, etc."></textarea>
+          </div>
+
+          <div class="row filebox">
+            <label for="photos">Photos (optionnel): tableau, compteur, prises, points critiques</label>
+            <input id="photos" name="photos" type="file" multiple accept="image/*" />
+            <div class="filelist" id="fileList">Aucun fichier sélectionné.</div>
+            <div class="help">Le PDF interne liste les noms des photos (léger pour iPad).</div>
+          </div>
+        </section>
+
+        <!-- 4) TABLEAU -->
+        <section class="card" id="sec4">
+          <h2>4) Tableau Électrique et Protections</h2>
+
+          <div class="row">
+            <label>Éléments présents (si vous savez)</label>
+            <div class="opts">
+              <label class="chip"><input type="checkbox" name="tableau_items" value="Différentiel général 300 mA"> Diff 300 mA</label>
+              <label class="chip"><input type="checkbox" name="tableau_items" value="Différentiel 30 mA (pièces d’eau)"> Diff 30 mA</label>
+              <label class="chip"><input type="checkbox" name="tableau_items" value="Disjoncteurs par circuit"> Disjoncteurs</label>
+              <label class="chip"><input type="checkbox" name="tableau_items" value="Circuits étiquetés"> Étiquettes</label>
+              <label class="chip"><input type="checkbox" name="tableau_items" value="Espace libre"> Espace libre</label>
+            </div>
+          </div>
+
+          <div class="grid">
+            <div class="row">
+              <label for="tableau_neuf">Tableau neuf ?</label>
+              <select id="tableau_neuf" name="tableau_neuf">
+                <option value="">Sélectionner...</option>
+                <option>Oui</option>
+                <option>Non</option>
+                <option>À évaluer sur place</option>
+              </select>
+            </div>
+            <div class="row">
+              <label for="marque_tableau">Marque souhaitée (optionnel)</label>
+              <input id="marque_tableau" name="marque_tableau" type="text" placeholder="Ex.: Hager, Schneider, ABB..." />
+            </div>
+          </div>
+
+          <div class="grid">
+            <div class="row">
+              <label for="terre">Mise à la terre</label>
+              <select id="terre" name="terre">
+                <option value="">Sélectionner...</option>
+                <option>OK (confirmée)</option>
+                <option>Non</option>
+                <option>Je ne sais pas (à mesurer)</option>
+              </select>
+            </div>
+            <div class="row">
+              <label for="equipotentialite">Liaison équipotentielle (SDB / tuyaux)</label>
+              <select id="equipotentialite" name="equipotentialite">
+                <option value="">Sélectionner...</option>
+                <option>Oui</option>
+                <option>Non</option>
+                <option>Je ne sais pas</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <label for="obs_tableau">Remarques tableau</label>
+            <textarea id="obs_tableau" name="obs_tableau" placeholder="Ex.: tableau plein, vieux disjoncteurs, manque d’espace, etc."></textarea>
+          </div>
+        </section>
+
+        <!-- 6) PIÈCES -->
+        <section class="card" id="sec6">
+          <h2>6) Besoins par Pièce (points & circuits)</h2>
+
+          <details open>
+            <summary>Cuisine</summary>
+            <div class="divider"></div>
+
+            <div class="grid">
+              <div class="row">
+                <label for="cuisine_prises">Prises (approx.)</label>
+                <input id="cuisine_prises" name="cuisine_prises" type="number" min="0" placeholder="Ex.: 12" />
+              </div>
+              <div class="row">
+                <label for="cuisine_lumiere">Éclairage</label>
+                <input id="cuisine_lumiere" name="cuisine_lumiere" type="text" placeholder="Ex.: spots + LED plan de travail" />
+              </div>
+            </div>
+
+            <div class="row">
+              <label>Appareils (circuits dédiés si nécessaire)</label>
+              <div class="opts">
+                <label class="chip"><input type="checkbox" name="cuisine_app" value="Plaque induction / cuisinière (dédié)"> Induction</label>
+                <label class="chip"><input type="checkbox" name="cuisine_app" value="Four (dédié)"> Four</label>
+                <label class="chip"><input type="checkbox" name="cuisine_app" value="Lave-vaisselle (dédié)"> LV</label>
+                <label class="chip"><input type="checkbox" name="cuisine_app" value="Frigo (dédié optionnel)"> Frigo</label>
+                <label class="chip"><input type="checkbox" name="cuisine_app" value="Hotte"> Hotte</label>
+              </div>
+            </div>
+
+            <div class="row">
+              <label for="cuisine_obs">Remarques</label>
+              <textarea id="cuisine_obs" name="cuisine_obs" placeholder="Ex.: îlot, positions, etc."></textarea>
+            </div>
+          </details>
+
+          <details>
+            <summary>Salle de bain</summary>
+            <div class="divider"></div>
+
+            <div class="grid">
+              <div class="row">
+                <label for="sdb_nb">Nombre de salles de bain</label>
+                <input id="sdb_nb" name="sdb_nb" type="number" min="0" placeholder="Ex.: 1" />
+              </div>
+              <div class="row">
+                <label for="sdb_points_lum">Points lumineux</label>
+                <input id="sdb_points_lum" name="sdb_points_lum" type="number" min="0" placeholder="Ex.: 3" />
+              </div>
+            </div>
+
+            <div class="row">
+              <label>Éléments</label>
+              <div class="opts">
+                <label class="chip"><input type="checkbox" name="sdb_items" value="Prise près du miroir (IP adapté)"> Prise miroir</label>
+                <label class="chip"><input type="checkbox" name="sdb_items" value="Miroir LED"> Miroir LED</label>
+                <label class="chip"><input type="checkbox" name="sdb_items" value="Ventilation / extracteur"> Extracteur</label>
+              </div>
+            </div>
+
+            <div class="row">
+              <label for="sdb_obs">Remarques</label>
+              <textarea id="sdb_obs" name="sdb_obs" placeholder="Ex.: zones, positions, etc."></textarea>
+            </div>
+          </details>
+
+          <details>
+            <summary>Séjour / Salon</summary>
+            <div class="divider"></div>
+
+            <div class="grid">
+              <div class="row">
+                <label for="salon_prises">Prises (approx.)</label>
+                <input id="salon_prises" name="salon_prises" type="number" min="0" placeholder="Ex.: 10" />
+              </div>
+              <div class="row">
+                <label for="salon_tv">TV / Réseau / RJ45</label>
+                <input id="salon_tv" name="salon_tv" type="text" placeholder="Ex.: 2 TV + 2 RJ45" />
+              </div>
+            </div>
+
+            <div class="row">
+              <label for="salon_lum">Éclairage</label>
+              <input id="salon_lum" name="salon_lum" type="text" placeholder="Ex.: plafonnier + spots" />
+            </div>
+          </details>
+
+          <details>
+            <summary>Chambres</summary>
+            <div class="divider"></div>
+
+            <div class="grid">
+              <div class="row">
+                <label for="ch_nb">Nombre de chambres</label>
+                <input id="ch_nb" name="ch_nb" type="number" min="0" placeholder="Ex.: 2" />
+              </div>
+              <div class="row">
+                <label for="ch_prises_moy">Prises/chambre (moyenne)</label>
+                <input id="ch_prises_moy" name="ch_prises_moy" type="number" min="0" placeholder="Ex.: 6" />
+              </div>
+            </div>
+
+            <div class="row">
+              <label>Options</label>
+              <div class="opts">
+                <label class="chip"><input type="checkbox" name="ch_items" value="RJ45 / réseau"> RJ45</label>
+                <label class="chip"><input type="checkbox" name="ch_items" value="Point TV"> TV</label>
+                <label class="chip"><input type="checkbox" name="ch_items" value="Détecteur fumée (recommandé)"> Détecteur</label>
+              </div>
+            </div>
+          </details>
+
+          <details>
+            <summary>Buanderie / Garage / Extérieur</summary>
+            <div class="divider"></div>
+
+            <div class="row">
+              <label>Éléments</label>
+              <div class="opts">
+                <label class="chip"><input type="checkbox" name="ext_items" value="Machine à laver (dédié)"> MAL</label>
+                <label class="chip"><input type="checkbox" name="ext_items" value="Sèche-linge (dédié)"> SL</label>
+                <label class="chip"><input type="checkbox" name="ext_items" value="Prises extérieures IP65"> Prises ext.</label>
+                <label class="chip"><input type="checkbox" name="ext_items" value="Éclairage extérieur avec détecteur"> Ext. détecteur</label>
+                <label class="chip"><input type="checkbox" name="ext_items" value="Préparation Wallbox / EV"> Prépa EV</label>
+              </div>
+            </div>
+
+            <div class="grid">
+              <div class="row">
+                <label for="garage_prises">Prises garage/buanderie (approx.)</label>
+                <input id="garage_prises" name="garage_prises" type="number" min="0" placeholder="Ex.: 6" />
+              </div>
+              <div class="row">
+                <label for="ext_lum">Éclairage extérieur</label>
+                <input id="ext_lum" name="ext_lum" type="text" placeholder="Ex.: 4 points + 2 détecteurs" />
+              </div>
+            </div>
+
+            <div class="row">
+              <label for="autres_pieces">Autres pièces / remarques</label>
+              <textarea id="autres_pieces" name="autres_pieces" placeholder="Ex.: bureau, grenier, jardin, etc."></textarea>
+            </div>
+          </details>
+        </section>
+
+        <!-- 7) SÉCURITÉ -->
+        <section class="card" id="sec7">
+          <h2>7) Sécurité & Options</h2>
+
+          <div class="row">
+            <label>Profil</label>
+            <div class="opts">
+              <label class="chip"><input type="checkbox" name="profil" value="Enfants"> Enfants</label>
+              <label class="chip"><input type="checkbox" name="profil" value="Personnes âgées"> Personnes âgées</label>
+              <label class="chip"><input type="checkbox" name="profil" value="Home office / équipements sensibles"> Home office</label>
+            </div>
+          </div>
+
+          <div class="row">
+            <label>Ajouter</label>
+            <div class="opts">
+              <label class="chip"><input type="checkbox" name="secu_add" value="SPD (parafoudre)"> SPD</label>
+              <label class="chip"><input type="checkbox" name="secu_add" value="Détecteurs fumée/CO"> Fumée/CO</label>
+              <label class="chip"><input type="checkbox" name="secu_add" value="Sécurité enfant sur prises"> Sécurité prises</label>
+              <label class="chip"><input type="checkbox" name="secu_add" value="Circuits critiques (frigo/serveur)"> Circuits critiques</label>
+            </div>
+          </div>
+
+          <div class="row">
+            <label for="organisme">Contrôle (Vinçotte / BTV / etc.)</label>
+            <select id="organisme" name="organisme">
+              <option value="">Sélectionner...</option>
+              <option>Oui (fin de chantier)</option>
+              <option>Oui (pré-contrôle + fin)</option>
+              <option>Non</option>
+              <option>Peut-être</option>
+            </select>
+          </div>
+        </section>
+
+        <!-- 9) DEVIS (VOTRE PRICING) -->
+        <section class="card" id="sec9">
+          <h2>9) Devis (tarification BSR Build — HTVA)</h2>
+          <div class="help">
+            <b>Points = uniquement prises + interrupteurs</b>. Lumières et spots se chiffrent séparément.
+            Déchets = <b>25 € par 10 points</b> (calcul automatique).
+          </div>
+
+          <div class="grid">
+            <div class="row">
+              <label for="dev_ref">Référence devis</label>
+              <input id="dev_ref" name="dev_ref" type="text" placeholder="Ex.: BSR-2026-001" />
+            </div>
+            <div class="row">
+              <label for="dev_validite">Validité (jours)</label>
+              <input id="dev_validite" name="dev_validite" type="number" min="1" value="15" />
+            </div>
+          </div>
+
+          <div class="grid">
+            <div class="row">
+              <label for="tva">TVA (%)</label>
+              <input id="tva" name="tva" type="number" min="0" step="0.1" value="21" />
+            </div>
+            <div class="row">
+              <label for="deplacement">Déplacement / frais fixes (€ HTVA)</label>
+              <input id="deplacement" name="deplacement" type="number" min="0" step="1" value="0" />
+            </div>
+          </div>
+
+          <details open>
+            <summary>Quantités & prix unitaires (HTVA)</summary>
+            <div class="divider"></div>
+
+            <div class="grid">
+              <div class="row">
+                <label for="q_points">Points (prises + interrupteurs) — quantité</label>
+                <input id="q_points" name="q_points" type="number" min="0" value="0" />
+                <div class="help">Ex.: 2 prises au même endroit = 1 point. Lumières/spots ne comptent pas comme point.</div>
+              </div>
+              <div class="row">
+                <label for="pu_points">Prix unitaire points (€ HTVA)</label>
+                <input id="pu_points" name="pu_points" type="number" min="0" step="1" value="140" />
+              </div>
+            </div>
+
+            <div class="grid">
+              <div class="row">
+                <label for="q_lumieres">Lumières (simple) — quantité</label>
+                <input id="q_lumieres" name="q_lumieres" type="number" min="0" value="0" />
+                <div class="help">Prix = 10 € HTVA / lumière.</div>
+              </div>
+              <div class="row">
+                <label for="pu_lumieres">Prix unitaire lumières (€ HTVA)</label>
+                <input id="pu_lumieres" name="pu_lumieres" type="number" min="0" step="1" value="10" />
+              </div>
+            </div>
+
+            <div class="grid">
+              <div class="row">
+                <label for="q_spots">Spots — quantité</label>
+                <input id="q_spots" name="q_spots" type="number" min="0" value="0" />
+                <div class="help">Prix = 15 € HTVA / spot.</div>
+              </div>
+              <div class="row">
+                <label for="pu_spots">Prix unitaire spots (€ HTVA)</label>
+                <input id="pu_spots" name="pu_spots" type="number" min="0" step="1" value="15" />
+              </div>
+            </div>
+
+            <div class="grid">
+              <div class="row">
+                <label for="pu_dechets">Déchets / gravats — prix (€ HTVA) par 10 points</label>
+                <input id="pu_dechets" name="pu_dechets" type="number" min="0" step="1" value="25" />
+              </div>
+              <div class="row">
+                <label>Aperçu calcul déchets</label>
+                <input id="points_calc_preview" type="text" readonly value="0 points → 0 pack(s) → 0 €" />
+                <div class="help">Déchets = ceil(points/10) × 25 € HTVA.</div>
+              </div>
+            </div>
+
+            <div class="row">
+              <label for="dev_notes">Notes devis / exclusions / conditions</label>
+              <textarea id="dev_notes" name="dev_notes" placeholder="Ex.: finition/peinture non incluses, saignées selon état, matériel client, accès au tableau, etc."></textarea>
+            </div>
+          </details>
+
+          <details>
+            <summary>Infos entreprise (pour le PDF Devis)</summary>
+            <div class="divider"></div>
+
+            <div class="grid">
+              <div class="row">
+                <label for="societe_nom">Nom société (affiché)</label>
+                <input id="societe_nom" name="societe_nom" type="text" value="BSR Build" />
+              </div>
+              <div class="row">
+                <label for="societe_tel">Téléphone</label>
+                <input id="societe_tel" name="societe_tel" type="text" placeholder="Ex.: +32 ..." />
+              </div>
+            </div>
+
+            <div class="grid">
+              <div class="row">
+                <label for="societe_email">Email</label>
+                <input id="societe_email" name="societe_email" type="text" placeholder="Ex.: contact@..." />
+              </div>
+              <div class="row">
+                <label for="societe_adresse">Adresse société</label>
+                <input id="societe_adresse" name="societe_adresse" type="text" placeholder="Ex.: Bruxelles..." />
+              </div>
+            </div>
+
+            <div class="grid">
+              <div class="row">
+                <label for="societe_vat">TVA / BCE (optionnel)</label>
+                <input id="societe_vat" name="societe_vat" type="text" placeholder="Ex.: BE0xxx.xxx.xxx" />
+              </div>
+              <div class="row">
+                <label for="paiement">Conditions de paiement</label>
+                <input id="paiement" name="paiement" type="text" placeholder="Ex.: 40% acompte, solde fin de chantier" />
+              </div>
+            </div>
+          </details>
+        </section>
+
+        <!-- JSON -->
+        <section class="card">
+          <h2>Aperçu (JSON)</h2>
+          <details>
+            <summary>Afficher / masquer</summary>
+            <div class="divider"></div>
+            <pre id="preview" class="mono"></pre>
+          </details>
+        </section>
+
+      </form>
+    </section>
+  </div>
+</main>
+
+<!-- PRINT AREA -->
+<div id="printArea">
+  <div class="head">
+    <svg width="44" height="44" viewBox="0 0 64 64" aria-label="BSR Build logo" role="img">
+      <defs>
+        <linearGradient id="gp" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#111"/>
+          <stop offset="1" stop-color="#444"/>
+        </linearGradient>
+      </defs>
+      <rect x="6" y="6" width="52" height="52" rx="14" fill="url(#gp)"/>
+      <path d="M18 42V22h12c5 0 8 2 8 6 0 2-1 4-3 5 3 1 4 3 4 6 0 5-4 7-9 7H18zm8-12h4c2 0 3-1 3-2s-1-2-3-2h-4v4zm0 8h5c2 0 3-1 3-3 0-1-1-3-3-3h-5v6z" fill="#fff" opacity=".95"/>
+      <path d="M41 22h5v20h-5z" fill="#fff" opacity=".35"/>
+    </svg>
+    <div>
+      <h1 id="printTitle">BSR Build — Document</h1>
+      <div class="meta" id="printMeta"></div>
+    </div>
+  </div>
+
+  <div id="printContent"></div>
+</div>
+
+<div id="toast" class="toast">OK</div>
+
+<script>
+  const STORAGE_KEY = "BSRBuild_RGIE_Devis_FR_v2";
+  const form = document.getElementById("form");
+  const preview = document.getElementById("preview");
+  const toast = document.getElementById("toast");
+  const photos = document.getElementById("photos");
+  const fileList = document.getElementById("fileList");
+
+  const printTitle = document.getElementById("printTitle");
+  const printMeta = document.getElementById("printMeta");
+  const printContent = document.getElementById("printContent");
+
+  function showToast(msg){
+    toast.textContent = msg;
+    toast.classList.add("show");
+    setTimeout(()=>toast.classList.remove("show"), 1400);
+  }
+
+  function scrollToId(id){
+    const el = document.getElementById(id);
+    if(el) el.scrollIntoView({ behavior:"smooth", block:"start" });
+  }
+  window.scrollToId = scrollToId;
+
+  function listFiles(){
+    if(!photos || !fileList) return;
+    if(!photos.files || photos.files.length === 0){
+      fileList.textContent = "Aucun fichier sélectionné.";
+      return;
+    }
+    const names = Array.from(photos.files).map(f => f.name);
+    fileList.textContent = names.join(" • ");
+  }
+  if (photos) photos.addEventListener("change", listFiles);
+
+  function ensureArrays(obj, names){
+    for (const n of names){
+      if (!obj[n]) obj[n] = [];
+      if (!Array.isArray(obj[n])) obj[n] = [obj[n]];
+    }
+  }
+
+  function formToObject(){
+    const data = {};
+    const fd = new FormData(form);
+
+    for (const [k, v] of fd.entries()){
+      if (data[k] && !Array.isArray(data[k])) data[k] = [data[k]];
+      if (Array.isArray(data[k])) data[k].push(v);
+      else data[k] = v;
+    }
+
+    ensureArrays(data, ["systemes","docs","tableau_items","cuisine_app","sdb_items","ch_items","ext_items","profil","secu_add"]);
+
+    data.photos_noms = (photos && photos.files && photos.files.length)
+      ? Array.from(photos.files).map(f => f.name)
+      : [];
+
+    data._meta = { genere_le: new Date().toISOString(), app: "BSR Build FR", version: "2.0" };
+    return data;
+  }
+
+  function objectToForm(obj){
+    form.reset();
+
+    for (const [k, v] of Object.entries(obj)){
+      if (k === "_meta") continue;
+      if (Array.isArray(v)){
+        v.forEach(val=>{
+          const el = form.querySelector(`input[name="${k}"][value="${CSS.escape(val)}"]`);
+          if (el) el.checked = true;
+        });
+      } else {
+        const el = form.elements[k];
+        if (!el) continue;
+        if (el.type === "checkbox") el.checked = (v === true || v === "true");
+        else el.value = v;
+      }
+    }
+
+    listFiles();
+    updatePointsPreview();
+  }
+
+  function updatePreview(){
+    preview.textContent = JSON.stringify(formToObject(), null, 2);
+  }
+
+  function escapeHtml(s){
+    return String(s ?? "")
+      .replaceAll("&","&amp;")
+      .replaceAll("<","&lt;")
+      .replaceAll(">","&gt;");
+  }
+
+  // ---------- INTERNAL DOSSIER (RGIE) ----------
+  function buildInternalBlocks(d){
+    const blocks = [];
+    const add = (title, lines) => blocks.push({ title, lines: lines.filter(Boolean) });
+
+    add("Client & Chantier", [
+      `Client: ${d.client_nom || "-"}`,
+      `Contact: ${d.client_contact || "-"}`,
+      `Adresse: ${d.adresse || "-"}`,
+      `Type de bien: ${d.type_bien || "-"}`,
+      `Année construction: ${d.annee_construction || "-"}`,
+      `Objectif: ${d.objectif || "-"}`,
+      `Début souhaité: ${d.date_debut || "-"}`,
+      d.contraintes ? `Contraintes: ${d.contraintes}` : null
+    ]);
+
+    add("Alimentation & Systèmes", [
+      `Alimentation: ${d.alimentation || "-"}`,
+      `Puissance: ${d.puissance || "-"}`,
+      `Systèmes: ${(d.systemes||[]).join(", ") || "-"}`,
+      d.pannes ? `Pannes / symptômes: ${d.pannes}` : null
+    ]);
+
+    add("RGIE — Contrôle & Documents", [
+      `Conformité: ${d.conformite || "-"}`,
+      `Dernier contrôle: ${d.date_controle || "-"}`,
+      `Documents: ${(d.docs||[]).join(", ") || "-"}`,
+      d.etat_installation ? `État / remarques: ${d.etat_installation}` : null,
+      `Photos (noms): ${(d.photos_noms||[]).join(", ") || "-"}`
+    ]);
+
+    add("Tableau & Protections", [
+      `Éléments: ${(d.tableau_items||[]).join(", ") || "-"}`,
+      `Tableau neuf: ${d.tableau_neuf || "-"}`,
+      `Marque: ${d.marque_tableau || "-"}`,
+      `Terre: ${d.terre || "-"}`,
+      `Équipotentialité: ${d.equipotentialite || "-"}`,
+      d.obs_tableau ? `Obs: ${d.obs_tableau}` : null
+    ]);
+
+    add("Cuisine", [
+      `Prises: ${d.cuisine_prises || "-"}`,
+      `Éclairage: ${d.cuisine_lumiere || "-"}`,
+      `Appareils: ${(d.cuisine_app||[]).join(", ") || "-"}`,
+      d.cuisine_obs ? `Obs: ${d.cuisine_obs}` : null
+    ]);
+
+    add("Salle de bain", [
+      `Nombre: ${d.sdb_nb || "-"}`,
+      `Points lumineux: ${d.sdb_points_lum || "-"}`,
+      `Éléments: ${(d.sdb_items||[]).join(", ") || "-"}`,
+      d.sdb_obs ? `Obs: ${d.sdb_obs}` : null
+    ]);
+
+    add("Séjour", [
+      `Prises: ${d.salon_prises || "-"}`,
+      `TV/Réseau: ${d.salon_tv || "-"}`,
+      `Éclairage: ${d.salon_lum || "-"}`
+    ]);
+
+    add("Chambres", [
+      `Nombre: ${d.ch_nb || "-"}`,
+      `Prises/chambre (moy): ${d.ch_prises_moy || "-"}`,
+      `Options: ${(d.ch_items||[]).join(", ") || "-"}`
+    ]);
+
+    add("Buanderie / Garage / Extérieur", [
+      `Éléments: ${(d.ext_items||[]).join(", ") || "-"}`,
+      `Prises garage: ${d.garage_prises || "-"}`,
+      `Éclairage ext.: ${d.ext_lum || "-"}`,
+      d.autres_pieces ? `Autres: ${d.autres_pieces}` : null
+    ]);
+
+    add("Sécurité & Options", [
+      `Profil: ${(d.profil||[]).join(", ") || "-"}`,
+      `Ajouter: ${(d.secu_add||[]).join(", ") || "-"}`,
+      `Contrôle organisme: ${d.organisme || "-"}`
+    ]);
+
+    const ck = [];
+    ck.push(`${(d.tableau_items||[]).includes("Différentiel général 300 mA") ? "☑" : "☐"} Différentiel général 300 mA`);
+    ck.push(`${(d.tableau_items||[]).includes("Différentiel 30 mA (pièces d’eau)") ? "☑" : "☐"} Différentiel 30 mA (pièces d’eau)`);
+    ck.push(`${String(d.terre||"").toLowerCase().includes("ok") ? "☑" : "☐"} Mise à la terre confirmée/mesurée`);
+    ck.push(`${String(d.equipotentialite||"").toLowerCase().includes("oui") ? "☑" : "☐"} Liaison équipotentielle`);
+    ck.push(`${(d.docs||[]).includes("Schéma unifilaire") ? "☑" : "☐"} Schéma unifilaire`);
+    ck.push(`${(d.docs||[]).includes("Plan de situation") ? "☑" : "☐"} Plan de situation`);
+    blocks.push({ title:"Checklist RGIE (prévision)", lines: ck });
+
+    const rec = [];
+    if (!(d.tableau_items||[]).includes("Différentiel général 300 mA")) rec.push("Prévoir un différentiel général 300 mA au tableau.");
+    if (!(d.tableau_items||[]).includes("Différentiel 30 mA (pièces d’eau)")) rec.push("Prévoir un différentiel 30 mA pour circuits des pièces d’eau.");
+    if (!String(d.terre||"").toLowerCase().includes("ok")) rec.push("Mesurer/corriger la mise à la terre et l’équipotentialité avant contrôle.");
+    if ((d.systemes||[]).includes("Wallbox / EV")) rec.push("Prévoir un circuit dédié EV (dimensionnement + protections adaptées).");
+    if (rec.length === 0) rec.push("Confirmer sur place et préparer le dossier (unifilaire + plan) pour contrôle.");
+    blocks.push({ title:"Recommandations (BSR Build)", lines: rec });
+
+    return blocks;
+  }
+
+  // ---------- DEVIS (VOTRE PRICING) ----------
+  function buildDevisData(d){
+    const num = (x)=> Number(x || 0);
+
+    const qPoints = num(d.q_points);
+    const puPoints = num(d.pu_points);
+
+    const qLum = num(d.q_lumieres);
+    const puLum = num(d.pu_lumieres);
+
+    const qSpots = num(d.q_spots);
+    const puSpots = num(d.pu_spots);
+
+    const puDechets = num(d.pu_dechets);
+    const packs10 = qPoints > 0 ? Math.ceil(qPoints / 10) : 0;
+    const dechetsTotal = packs10 * puDechets;
+
+    const lignes = [
+      { label: "Points (prises + interrupteurs)", q: qPoints, pu: puPoints },
+      { label: "Lumières (simple)", q: qLum, pu: puLum },
+      { label: "Spots", q: qSpots, pu: puSpots },
+      { label: `Déchets / gravats (par 10 points) — ${packs10} × ${puDechets.toFixed(2)} €`, q: packs10, pu: puDechets, force_total: dechetsTotal },
+    ].filter(l => (Number(l.q) > 0) && (Number(l.pu) >= 0));
+
+    const lineTotal = (l)=> (typeof l.force_total === "number" ? l.force_total : (Number(l.q||0) * Number(l.pu||0)));
+
+    const sousTotalLignes = lignes.reduce((sum, l)=> sum + lineTotal(l), 0);
+    const deplacement = num(d.deplacement);
+    const sousTotal = sousTotalLignes + deplacement;
+
+    const tvaPct = num(d.tva);
+    const tvaVal = sousTotal * (tvaPct/100);
+    const total = sousTotal + tvaVal;
+
+    return { lignes, lineTotal, sousTotalLignes, deplacement, sousTotal, tvaPct, tvaVal, total, packs10, qPoints };
+  }
+
+  // ---------- PRINT AREA (offline) ----------
+  function renderPrintArea(title, meta, blocks){
+    printTitle.textContent = title;
+    printMeta.textContent = meta;
+    printContent.innerHTML = "";
+    blocks.forEach(b=>{
+      const div = document.createElement("div");
+      div.className = "block";
+      div.innerHTML =
+        `<h3>${escapeHtml(b.title)}</h3>` +
+        (b.lines || []).map(l => `<div class="v">${escapeHtml(l)}</div>`).join("");
+      printContent.appendChild(div);
+      printContent.appendChild(document.createElement("hr"));
+    });
+  }
+
+  // ---------- PDF helpers ----------
+  function pdfHeader(doc, title, company="BSR Build"){
+    const margin = 40;
+    doc.setFillColor(17,17,17);
+    doc.roundedRect(margin, 34, 30, 30, 8, 8, "F");
+    doc.setTextColor(255);
+    doc.setFont("helvetica","bold");
+    doc.setFontSize(11);
+    doc.text("BSR", margin+7, 54);
+    doc.setTextColor(0);
+
+    doc.setFont("helvetica","bold");
+    doc.setFontSize(14);
+    doc.text(`${company} — ${title}`, margin+40, 50);
+
+    doc.setFont("helvetica","normal");
+    doc.setFontSize(10);
+    doc.text(`Généré le: ${new Date().toLocaleString()}`, margin+40, 66);
+
+    return 82;
+  }
+
+  function addWrapped(doc, text, x, y, maxW, fontSize=10, bold=false){
+    doc.setFont("helvetica", bold ? "bold" : "normal");
+    doc.setFontSize(fontSize);
+    const lines = doc.splitTextToSize(text, maxW);
+    for (const line of lines){
+      doc.text(line, x, y);
+      y += (fontSize + 3);
+    }
+    return y;
+  }
+
+  async function generatePDFInternal(){
+    if(!form.reportValidity()){
+      showToast("Veuillez remplir les champs obligatoires");
+      return;
+    }
+    const d = formToObject();
+    const blocks = buildInternalBlocks(d);
+
+    const jspdfLib = window.jspdf && window.jspdf.jsPDF ? window.jspdf : null;
+    if(!jspdfLib){
+      renderPrintArea(
+        "Dossier interne (RGIE)",
+        `Client: ${d.client_nom || "-"} • Adresse: ${d.adresse || "-"}`,
+        blocks
+      );
+      window.print();
+      return;
+    }
+
+    const doc = new jspdfLib.jsPDF({ unit:"pt", format:"a4" });
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const margin = 40;
+    const maxW = pageW - margin*2;
+    let y = pdfHeader(doc, "Dossier interne (RGIE)", "BSR Build");
+
+    const ensurePage = (need=0)=>{
+      if(y + need > pageH - margin){
+        doc.addPage();
+        y = margin;
+      }
+    };
+
+    blocks.forEach(b=>{
+      ensurePage(40);
+      y = addWrapped(doc, b.title, margin, y, maxW, 12, true);
+      y += 2;
+      (b.lines||[]).forEach(line=>{
+        ensurePage(18);
+        y = addWrapped(doc, "• " + line, margin, y, maxW, 10, false);
+      });
+      y += 6;
+      doc.setDrawColor(220);
+      doc.line(margin, y, pageW - margin, y);
+      y += 10;
+    });
+
+    const safeName = (d.client_nom || "client").replace(/[^\w\-]+/g,"_").slice(0,40);
+    const dt = new Date();
+    const yyyy = dt.getFullYear();
+    const mm = String(dt.getMonth()+1).padStart(2,"0");
+    const dd = String(dt.getDate()).padStart(2,"0");
+    doc.save(`BSRBuild_DossierInterne_RGIE_${safeName}_${yyyy}-${mm}-${dd}.pdf`);
+    showToast("PDF interne généré ✅");
+  }
+
+  async function generatePDFDevis(){
+    if(!form.reportValidity()){
+      showToast("Veuillez remplir les champs obligatoires");
+      return;
+    }
+    const d = formToObject();
+    const devis = buildDevisData(d);
+    const company = d.societe_nom || "BSR Build";
+
+    const jspdfLib = window.jspdf && window.jspdf.jsPDF ? window.jspdf : null;
+    if(!jspdfLib){
+      const blocks = [];
+      blocks.push({ title: "Client", lines: [
+        `Client: ${d.client_nom || "-"}`,
+        `Adresse: ${d.adresse || "-"}`,
+        `Contact: ${d.client_contact || "-"}`,
+      ]});
+      blocks.push({ title: "Devis", lines: [
+        `Référence: ${d.dev_ref || "-"}`,
+        `Validité: ${d.dev_validite || "-"} jours`,
+        `TVA: ${devis.tvaPct}%`,
+        `Déplacement/frais: € ${devis.deplacement.toFixed(2)}`,
+      ]});
+      blocks.push({ title: "Lignes", lines: devis.lignes.map(l=>{
+        const total = devis.lineTotal(l);
+        return `${l.label} — Qté ${Number(l.q||0)} × € ${Number(l.pu||0).toFixed(2)} = € ${total.toFixed(2)}`;
+      })});
+      blocks.push({ title: "Totaux", lines: [
+        `Sous-total (lignes): € ${devis.sousTotalLignes.toFixed(2)}`,
+        `Sous-total HT (avec frais): € ${devis.sousTotal.toFixed(2)}`,
+        `TVA: € ${devis.tvaVal.toFixed(2)}`,
+        `TOTAL TTC: € ${devis.total.toFixed(2)}`
+      ]});
+      if (d.dev_notes) blocks.push({ title:"Notes", lines:[d.dev_notes]});
+      renderPrintArea(
+        "Devis (client)",
+        `${company} • Client: ${d.client_nom || "-"} • ${new Date().toLocaleDateString()}`,
+        blocks
+      );
+      window.print();
+      return;
+    }
+
+    const doc = new jspdfLib.jsPDF({ unit:"pt", format:"a4" });
+    const pageW = doc.internal.pageSize.getWidth();
+    const pageH = doc.internal.pageSize.getHeight();
+    const margin = 40;
+    const maxW = pageW - margin*2;
+
+    let y = pdfHeader(doc, "Devis", company);
+
+    // En-tête entreprise
+    doc.setFont("helvetica","normal");
+    doc.setFontSize(10);
+    const line = (t)=> { doc.text(t, margin, y); y+=14; };
+
+    line(`Société: ${company}`);
+    if (d.societe_adresse) line(`Adresse: ${d.societe_adresse}`);
+    if (d.societe_tel) line(`Téléphone: ${d.societe_tel}`);
+    if (d.societe_email) line(`Email: ${d.societe_email}`);
+    if (d.societe_vat) line(`TVA/BCE: ${d.societe_vat}`);
+
+    y += 6;
+    doc.setDrawColor(220);
+    doc.line(margin, y, pageW-margin, y);
+    y += 14;
+
+    // Client
+    doc.setFont("helvetica","bold"); doc.setFontSize(11);
+    doc.text("Client", margin, y); y+=14;
+    doc.setFont("helvetica","normal"); doc.setFontSize(10);
+    line(`Nom: ${d.client_nom || "-"}`);
+    line(`Adresse: ${d.adresse || "-"}`);
+    line(`Contact: ${d.client_contact || "-"}`);
+
+    y += 6;
+    doc.setDrawColor(220);
+    doc.line(margin, y, pageW-margin, y);
+    y += 14;
+
+    // Infos devis
+    doc.setFont("helvetica","bold"); doc.setFontSize(11);
+    doc.text("Informations devis", margin, y); y+=14;
+    doc.setFont("helvetica","normal"); doc.setFontSize(10);
+    line(`Référence: ${d.dev_ref || "-"}`);
+    line(`Date: ${new Date().toLocaleDateString()}`);
+    line(`Validité: ${d.dev_validite || "-"} jours`);
+    if (d.paiement) line(`Paiement: ${d.paiement}`);
+
+    y += 10;
+
+    // Table
+    const col = {
+      label: margin,
+      qty: pageW - margin - 210,
+      pu: pageW - margin - 140,
+      total: pageW - margin - 60,
+    };
+
+    const ensurePage = (need=0)=>{
+      if(y + need > pageH - margin){
+        doc.addPage();
+        y = margin;
+      }
+    };
+
+    doc.setFont("helvetica","bold"); doc.setFontSize(10);
+    doc.text("Désignation", col.label, y);
+    doc.text("Qté", col.qty, y, {align:"right"});
+    doc.text("PU (€)", col.pu, y, {align:"right"});
+    doc.text("Total (€)", col.total, y, {align:"right"});
+    y += 10;
+    doc.setDrawColor(200);
+    doc.line(margin, y, pageW-margin, y);
+    y += 12;
+
+    doc.setFont("helvetica","normal"); doc.setFontSize(10);
+
+    devis.lignes.forEach(l=>{
+      ensurePage(26);
+      const total = devis.lineTotal(l);
+
+      const labelLines = doc.splitTextToSize(l.label, col.qty - col.label - 10);
+      const rowH = Math.max(14*labelLines.length, 14);
+
+      doc.text(labelLines, col.label, y);
+      doc.text(String(Number(l.q||0)), col.qty, y, {align:"right"});
+      doc.text(Number(l.pu||0).toFixed(2), col.pu, y, {align:"right"});
+      doc.text(total.toFixed(2), col.total, y, {align:"right"});
+
+      y += rowH + 4;
+    });
+
+    // Frais fixes
+    if (devis.deplacement > 0){
+      ensurePage(22);
+      doc.text("Frais fixes / déplacement", col.label, y);
+      doc.text("1", col.qty, y, {align:"right"});
+      doc.text(devis.deplacement.toFixed(2), col.pu, y, {align:"right"});
+      doc.text(devis.deplacement.toFixed(2), col.total, y, {align:"right"});
+      y += 18;
+    }
+
+    y += 6;
+    doc.setDrawColor(200);
+    doc.line(margin, y, pageW-margin, y);
+    y += 14;
+
+    // Totaux
+    ensurePage(80);
+    const rightX = pageW - margin;
+    const labelX = pageW - margin - 220;
+
+    const totLine = (lbl, val, bold=false)=>{
+      doc.setFont("helvetica", bold ? "bold":"normal");
+      doc.text(lbl, labelX, y);
+      doc.text(val, rightX, y, {align:"right"});
+      y += 14;
+    };
+
+    totLine("Sous-total (lignes)", `€ ${devis.sousTotalLignes.toFixed(2)}`);
+    if (devis.deplacement > 0) totLine("Frais fixes / déplacement", `€ ${devis.deplacement.toFixed(2)}`);
+    totLine("Sous-total HT", `€ ${devis.sousTotal.toFixed(2)}`);
+    totLine(`TVA (${devis.tvaPct}%)`, `€ ${devis.tvaVal.toFixed(2)}`);
+    totLine("TOTAL TTC", `€ ${devis.total.toFixed(2)}`, true);
+
+    // Notes
+    if (d.dev_notes){
+      y += 8;
+      ensurePage(120);
+      doc.setFont("helvetica","bold"); doc.text("Notes / conditions", margin, y); y += 14;
+      doc.setFont("helvetica","normal");
+      const lines = doc.splitTextToSize(d.dev_notes, maxW);
+      lines.forEach(ln=>{
+        ensurePage(14);
+        doc.text(ln, margin, y);
+        y += 13;
+      });
+    }
+
+    y += 10;
+    ensurePage(30);
+    doc.setFont("helvetica","normal");
+    doc.setFontSize(9);
+    doc.setTextColor(90);
+    doc.text("Devis basé sur les informations fournies. Une visite sur place peut ajuster quantités et prix.", margin, y);
+    doc.setTextColor(0);
+
+    const safeName = (d.client_nom || "client").replace(/[^\w\-]+/g,"_").slice(0,40);
+    const dt = new Date();
+    const yyyy = dt.getFullYear();
+    const mm = String(dt.getMonth()+1).padStart(2,"0");
+    const dd = String(dt.getDate()).padStart(2,"0");
+    doc.save(`BSRBuild_Devis_${safeName}_${yyyy}-${mm}-${dd}.pdf`);
+    showToast("PDF Devis généré ✅");
+  }
+
+  // ---------- UI helpers ----------
+  function updatePointsPreview(){
+    const d = formToObject();
+    const devis = buildDevisData(d);
+    const el = document.getElementById("points_calc_preview");
+    if (!el) return;
+    const packs = devis.packs10;
+    const pu = Number(d.pu_dechets || 0);
+    const total = packs * pu;
+    el.value = `${devis.qPoints} point(s) → ${packs} pack(s) → ${total.toFixed(2)} € HTVA`;
+  }
+
+  // ---------- Buttons ----------
+  document.getElementById("btnTop").addEventListener("click", ()=>window.scrollTo({top:0, behavior:"smooth"}));
+
+  document.getElementById("btnSave").addEventListener("click", () => {
+    const d = formToObject();
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(d));
+    updatePreview();
+    showToast("Sauvegardé ✅");
+  });
+
+  document.getElementById("btnLoad").addEventListener("click", () => {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(!raw) return showToast("Aucune sauvegarde");
+    objectToForm(JSON.parse(raw));
+    updatePreview();
+    updatePointsPreview();
+    showToast("Chargé ✅");
+  });
+
+  document.getElementById("btnClear").addEventListener("click", () => {
+    localStorage.removeItem(STORAGE_KEY);
+    preview.textContent = "";
+    updatePointsPreview();
+    showToast("Tout effacé 🗑️");
+  });
+
+  document.getElementById("btnPDFInterne").addEventListener("click", generatePDFInternal);
+  document.getElementById("btnPDFDevis").addEventListener("click", generatePDFDevis);
+
+  document.getElementById("btnPrint").addEventListener("click", () => {
+    const d = formToObject();
+    const blocks = buildInternalBlocks(d);
+    renderPrintArea(
+      "BSR Build — Dossier (impression)",
+      `Client: ${d.client_nom || "-"} • Adresse: ${d.adresse || "-"} • ${new Date().toLocaleDateString()}`,
+      blocks
+    );
+    window.print();
+  });
+
+  form.addEventListener("input", ()=>{
+    updatePreview();
+    updatePointsPreview();
+  });
+
+  // init
+  updatePreview();
+  listFiles();
+  updatePointsPreview();
+</script>
+</body>
+</html>
